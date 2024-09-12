@@ -97,16 +97,37 @@ async function scrape(rootURL, fileName) {
     console.log(`Парсинг завершен, данные сохранены в ${fileName}`);
 }
 
+// readConfig считывает данные из конфиг файла
+function readConfig() {
+    let config;
+    try {
+        const configData = fs.readFileSync('config.json');
+        config = JSON.parse(configData);
+        console.log('Конфигурация загружена:\n', config);
+        rootURL = config.root_url
+        fileName = config.file_name
+        pageCountForRestart = config.page_count_for_restart
+    } catch (error) {
+        console.error('Ошибка при чтении config.json:', error);
+        process.exit(1);
+    }
+}
+
+async function main(){
+    readConfig();
+    scrape(rootURL, fileName);
+}
+
 // ПЕРЕМЕННЫЕ:
 
 // Базовый URL сайта
-const rootURL = 'https://megamarket.ru/catalog'
+let rootURL = 'https://megamarket.ru/catalog'
 
 // Имя файла для сохранения директорий
-const fileName = 'categories.json'
+let fileName = 'categories.json'
 
 // Количество страниц, через которое будет происходить перезапуск
-const pageCountForRestart = 100;
+let pageCountForRestart = 100;
 
 // Счетчик пройденных страниц для дальнейшего перезапуска браузера
 let totalPages = 0;
@@ -116,7 +137,7 @@ let browser;
 
 // ГЛАВНАЯ ФУНКЦИЯ:
 
-// Запуск парсера
-scrape(rootURL, fileName);
+// Инициализация
+main()
 
 // TODO: в мебели есть "показать все"
