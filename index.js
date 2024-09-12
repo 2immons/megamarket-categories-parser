@@ -3,11 +3,11 @@ const fs = require('fs');
 
 // hasSubcategories показывает имеются ли категории на странице
 async function hasSubcategories(page) {
-    const hasCategories = await page.$('.catalog-department__redesigned-categories');
+    try {
+        await page.waitForSelector('.catalog-department__redesigned-categories', { timeout: 5000 })
 
-    if (hasCategories)
         return true
-    else {
+    } catch (error) {
         console.log(`---/ Нет вложенных категорий в этой категории`);
         return false;
     }
