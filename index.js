@@ -15,25 +15,22 @@ async function hasSubcategories(page) {
 
 // fetchCategories возвращает информацию о категориях на странице
 async function fetchCategories(browser, url) {
-    const page = await browser.newPage()
+    let page;
     try {
+        page = await browser.newPage();
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
         if (!await hasSubcategories(page)) {
-            await page.close()
+            await page.close();
             return [];
         }
 
-        // Парсинг категорий на текущей странице
         const categories = await page.evaluate(() => {
             const categoryElements = document.querySelectorAll('.inverted-catalog-category');
             const categoriesData = [];
 
-            // Проход по каждому найденной на странице карточке категории
             categoryElements.forEach(element => {
                 const name = element.querySelector('.inverted-catalog-category__title')?.innerText.trim();
-
-                // Получение URL
                 const megaMarketUrl = element.querySelector('a')?.getAttribute('href');
                 const fullMegaMarketUrl = megaMarketUrl ? `${window.location.origin}${megaMarketUrl}` : null;
 
@@ -48,15 +45,15 @@ async function fetchCategories(browser, url) {
             return categoriesData;
         });
 
-        await page.close()
-
+        await page.close();
         return categories;
     } catch (error) {
         console.error(`Ошибка при парсинге страницы: ${url}`, error);
-        await page.close()
+        if (page) await page.close();  // Закрываем страницу в случае ошибки
         return [];
     }
 }
+
 
 // parseCategoryRecursive рекурсивная функция для парсинга категорий и подкатегорий
 async function parseCategoryRecursive(url) {

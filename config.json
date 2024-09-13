@@ -1,5 +1,5 @@
 {
-  "root_url": "https://megamarket.ru/catalog",
-  "file_name": "categories.json",
+  "root_url": "https://megamarket.ru/catalog/avtotovary/",
+  "file_name": "avtotovary.json",
   "page_count_for_restart": 100
 }
